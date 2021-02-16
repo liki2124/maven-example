@@ -26,17 +26,19 @@ pipeline{
         sh 'mvn package'
       }
     }
-    node {
-  stage('Clone the Git') {
-    git 'https://github.com/liki2124/maven-example'
-  }
-  stage('SonarQube analysis') {
-    def scannerHome = tool 'sonarqube';
-    withSonarQubeEnv('sonarqube') {
-      sh "${scannerHome}/bin/sonar-scanner 
+   stage('quality check status')
+    {
+      steps{
+        script{
+          withSonarQubeEvn("sonarserver")
+          {
+            sh "mvn sonar:sonar"
+          }
+        }
+        sh 'mvn clean install'
+      }
     }
-  }
-}
+          
 
   }
 }
